@@ -1,0 +1,28 @@
+<form
+  class="flex justify-between flex-wrap gap-2"
+  #taskForm="ngForm"
+  (ngSubmit)="onSubmit(taskForm)"
+>
+  <input
+    type="text"
+    class="p-3 border outline-0 flex-1"
+    required
+    name="title"
+    ngModel
+    placeholder="Enter task"
+  />
+
+  <select name="priority" ngModel class="outline-0 border p-2">
+    <option value="">Priority</option>
+    <option value="low">Low</option>
+    <option value="medium">Mdium</option>
+    <option value="high">High</option>
+  </select>
+
+  <input
+    type="submit"
+    value="Add"
+    [disabled]="taskForm.invalid"
+    class="border flex-1 px-2 py-3 rounded bg-black cursor-pointer text-white"
+  />
+</form>

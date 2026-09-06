@@ -1,0 +1,43 @@
+<div class="relative max-w-3/4 bg-gray-200 mx-auto p-2">
+  <div class="flex justify-between my-5">
+    <p>{{ task()?.title }}</p>
+    <p>{{ task()?.completed }}</p>
+    <p>{{ task()?.priority }}</p>
+  </div>
+
+  <div class="space-x-4 mt-4">
+    <button (click)="onBack()" class="border rounded px-2 py-1 cursor-pointer">Back</button>
+    <button (click)="toggleEditForm()" class="border rounded px-2 py-1 cursor-pointer">Edit</button>
+  </div>
+
+  @if (showEditForm()) {
+    <div class="absolute shadow-2xs top-12 left-0.5 right-0.5 mt-12 bg-gray-400 p-4 rounded">
+      <form
+        #editForm="ngForm"
+        (ngSubmit)="onSubmit(editForm)"
+        class="bg-white p-4 flex flex-col justify-center items-stretch gap-4 my-2"
+      >
+        <input
+          #title
+          required
+          type="text"
+          name="title"
+          [ngModel]="task()?.title"
+          class="border px-2"
+        />
+        <select name="priority" [ngModel]="task()?.priority" class="outline-0 border">
+          <option value="low">Low</option>
+          <option value="medium">Mdium</option>
+          <option value="high">High</option>
+        </select>
+
+        <button [disabled]="!editForm.valid" type="submit" class="border px-2 cursor-pointer">
+          Save
+        </button>
+        <button type="button" (click)="toggleEditForm()" class="border px-2 cursor-pointer">
+          Cancel
+        </button>
+      </form>
+    </div>
+  }
+</div>

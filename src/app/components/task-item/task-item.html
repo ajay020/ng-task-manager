@@ -1,0 +1,37 @@
+<div>
+  <div class="mb-2 flex gap-4 items-center justify-between">
+    <input type="checkbox" (change)="onChange()" [checked]="task().completed" />
+    @if (task().completed) {
+      <p [routerLink]="['/tasks', task().id]" class=" cursor-pointer line-through">{{ task().title }}</p>
+    } @else {
+      <p [routerLink]="['/tasks', task().id]" class="cursor-pointer">{{ task().title }}</p>
+    }
+
+    <p class="border text-xs px-1">{{ task().priority }}</p>
+
+    <button (click)="toggleEditInput()" class="text-xs px-2 cursor-pointer border">Edit</button>
+    <button (click)="onDelete()" class="text-red-500 cursor-pointer ml-auto pr-4">X</button>
+  </div>
+
+  @if (showEditInput()) {
+    <form
+      #editForm="ngForm"
+      (ngSubmit)="onEditSubmit(editForm)"
+      class="flex flex-wrap gap-4 items-center my-2"
+    >
+      <input type="text" name="title" [ngModel]="task().title" class="border px-2" />
+
+      <select name="priority" [ngModel]="task().priority" class="outline-0 border">
+        <option value="">Priority</option>
+        <option value="low">Low</option>
+        <option value="medium">Mdium</option>
+        <option value="high">High</option>
+      </select>
+
+      <button type="submit" class="border px-2 cursor-pointer">Save</button>
+      <button type="button" (click)="toggleEditInput()" class="border px-2 cursor-pointer">
+        Cancel
+      </button>
+    </form>
+  }
+</div>

@@ -1,0 +1,46 @@
+<div>
+  <h1 class="text-2xl font-bold mt-2">Task List</h1>
+
+  <div class="px-1">
+    <p class="text-sm text-gray-600">{{ totalCount() }} task(s)</p>
+    <p class="text-sm text-gray-600">{{ completedCount() }} completed task(s)</p>
+    <p class="text-sm text-gray-600">{{ activeCount() }} active task(s)</p>
+  </div>
+
+  <!-- search  -->
+  <div>
+    <input
+      type="text"
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)"
+      placeholder="Search tasks..."
+      class="my-2 border px-2 py-1 w-full"
+    />
+    <p>{{ searchTerm() }}</p>
+  </div>
+
+  <div class="flex gap-4 my-4">
+    <button (click)="selectFilter('all')" class="border px-2 py-1 bg-white cursor-pointer">
+      All
+    </button>
+    <button (click)="selectFilter('active')" class="border px-2 py-1 bg-white cursor-pointer">
+      Active
+    </button>
+    <button (click)="selectFilter('completed')" class="border px-2 py-1 bg-white cursor-pointer">
+      Completed
+    </button>
+  </div>
+</div>
+
+<div class="space-y-4 bg-gray-300">
+  @for (task of filteredTasks(); track task.id) {
+    <app-task-item
+      [task]="task"
+      (handleChange)="taskChange.emit($event)"
+      (deleteTask)="taskDelete.emit($event)"
+      (editTask)="editTask.emit($event)"
+    />
+  } @empty {
+    <p>Add a task</p>
+  }
+</div>
