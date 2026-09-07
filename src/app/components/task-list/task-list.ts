@@ -24,7 +24,7 @@ export class TaskList {
     let tasks = this.tasks();
     const search = this.searchTerm().toLowerCase();
 
-    //  search 
+    //  search
     if (search) {
       tasks = tasks.filter((t) => t.title.toLowerCase().includes(search));
     }

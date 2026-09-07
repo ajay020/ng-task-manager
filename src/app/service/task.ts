@@ -1,16 +1,58 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, effect } from '@angular/core';
 import { Task, Priority } from '../models/task';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  tasks = signal<Task[]>([
-    { id: 1, title: 'Learn Angular', completed: false, priority: 'low' },
-    { id: 2, title: 'Build Task Manager', completed: false, priority: 'low' },
-    { id: 3, title: 'Practice TypeScript', completed: false, priority: 'low' },
-    { id: 4, title: 'Apply for jobs', completed: false, priority: 'low' },
-  ]);
+  initialTasks: Task[] = [
+    {
+      id: 1,
+      title: 'Learn Angular',
+      completed: false,
+      priority: 'low',
+    },
+    {
+      id: 2,
+      title: 'Build Task Manager',
+      completed: false,
+      priority: 'medium',
+    },
+    {
+      id: 3,
+      title: 'Practice TypeScript',
+      completed: false,
+      priority: 'low',
+    },
+    {
+      id: 4,
+      title: 'Apply for jobs',
+      completed: false,
+      priority: 'high',
+    },
+  ];
+
+  tasks = signal<Task[]>(this.loadTasks() ?? this.initialTasks);
+
+  constructor() {
+    effect(() => {
+      localStorage.setItem('tasks', JSON.stringify(this.tasks()));
+    });
+  }
+
+  private loadTasks(): Task[] | null {
+    const storedTasks = localStorage.getItem('tasks');
+
+    if (!storedTasks) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(storedTasks);
+    } catch {
+      return null;
+    }
+  }
 
   getTask(id: number): Task | null {
     return this.tasks().find((t) => t.id === id) ?? null;
