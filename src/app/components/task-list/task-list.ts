@@ -18,21 +18,41 @@ export class TaskList {
 
   filter = signal<'all' | 'active' | 'completed'>('all');
   searchTerm = signal('');
+  sortOption = signal('date');
 
   filteredTasks = computed(() => {
     let tasks = this.tasks();
     const search = this.searchTerm().toLowerCase();
 
+    //  search 
     if (search) {
       tasks = tasks.filter((t) => t.title.toLowerCase().includes(search));
     }
 
+    // filter
     if (this.filter() === 'completed') {
       return tasks.filter((t) => t.completed);
     }
 
     if (this.filter() === 'active') {
       return tasks.filter((t) => !t.completed);
+    }
+
+    // sort
+    if (this.sortOption() === 'title') {
+      tasks = [...tasks].sort((a, b) => {
+        return a.title.localeCompare(b.title);
+      });
+    }
+
+    if (this.sortOption() === 'priority') {
+      const priorityOrder = {
+        high: 1,
+        medium: 2,
+        low: 3,
+      };
+
+      tasks = [...tasks].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
     }
 
     return tasks;

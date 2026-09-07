@@ -19,6 +19,22 @@
     <p>{{ searchTerm() }}</p>
   </div>
 
+  <!-- sort  -->
+
+  <div>
+    <label for="sort" class="mr-2">Sort by:</label>
+    <select
+      id="sort"
+      [ngModel]="sortOption()"
+      (ngModelChange)="sortOption.set($event)"
+      class="border px-2 py-1"
+    >
+      <option value="date">Date</option>
+      <option value="priority">Priority</option>
+      <option value="title">Title</option>
+    </select>
+  </div>
+
   <div class="flex gap-4 my-4">
     <button (click)="selectFilter('all')" class="border px-2 py-1 bg-white cursor-pointer">
       All
