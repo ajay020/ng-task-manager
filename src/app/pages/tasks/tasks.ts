@@ -15,6 +15,7 @@ export class Tasks {
 
   tasks = this.taskService.tasks;
   loading = this.taskService.loading;
+  error = this.taskService.error;
 
   handleChange(task: Task) {
     this.taskService.toggleTask(task);

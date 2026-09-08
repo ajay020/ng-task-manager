@@ -3,7 +3,10 @@
 
   @if (loading()) {
     <p>Loading tasks...</p>
-  } @else {
+  }@else if (error()) {
+    <p>{{error()}}</p>
+  }
+  @else {
     <app-task-form (taskSubmit)="onTaskAdd($event)" />
 
     <app-task-list

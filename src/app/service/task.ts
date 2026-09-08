@@ -34,6 +34,7 @@ export class TaskService {
 
   tasks = signal<Task[]>(this.loadTasks() ?? this.initialTasks);
   loading = signal(true);
+  error = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -41,6 +42,7 @@ export class TaskService {
     });
 
     setTimeout(() => {
+      // this.error.set('Something went wrong.');
       this.loading.set(false);
     }, 1000);
   }
