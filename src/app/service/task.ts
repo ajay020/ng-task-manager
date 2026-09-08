@@ -33,11 +33,16 @@ export class TaskService {
   ];
 
   tasks = signal<Task[]>(this.loadTasks() ?? this.initialTasks);
+  loading = signal(true);
 
   constructor() {
     effect(() => {
       localStorage.setItem('tasks', JSON.stringify(this.tasks()));
     });
+
+    setTimeout(() => {
+      this.loading.set(false);
+    }, 1000);
   }
 
   private loadTasks(): Task[] | null {

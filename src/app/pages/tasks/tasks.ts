@@ -14,6 +14,7 @@ export class Tasks {
   private taskService = inject(TaskService);
 
   tasks = this.taskService.tasks;
+  loading = this.taskService.loading;
 
   handleChange(task: Task) {
     this.taskService.toggleTask(task);
