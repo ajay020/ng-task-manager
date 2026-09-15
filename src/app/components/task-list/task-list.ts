@@ -58,6 +58,9 @@ export class TaskList {
     return tasks;
   });
 
+  hasTasks = computed(() => this.tasks().length > 0);
+  hasFilteredTasks = computed(() => this.filteredTasks().length > 0);
+
   totalCount = computed(() => this.tasks().length);
   completedCount = computed(() => this.tasks().filter((t) => t.completed).length);
   activeCount = computed(() => this.tasks().filter((t) => !t.completed).length);

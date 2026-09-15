@@ -1,5 +1,7 @@
-import { Injectable, signal, effect } from '@angular/core';
-import { Task, Priority } from '../models/task';
+import { Injectable, signal, effect, inject } from '@angular/core';
+import { Task, Priority, TodoApiResponse } from '../models/task';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -32,22 +34,48 @@ export class TaskService {
     },
   ];
 
-  tasks = signal<Task[]>(this.loadTasks() ?? this.initialTasks);
+  tasks = signal<Task[]>(this.loadStoredTasks() ?? this.initialTasks);
   loading = signal(true);
   error = signal<string | null>(null);
+
+  private http = inject(HttpClient);
 
   constructor() {
     effect(() => {
       localStorage.setItem('tasks', JSON.stringify(this.tasks()));
     });
-
-    setTimeout(() => {
-      // this.error.set('Something went wrong.');
-      this.loading.set(false);
-    }, 1000);
   }
 
-  private loadTasks(): Task[] | null {
+  loadTasks() {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.http
+      .get<TodoApiResponse[]>('https://jsonplaceholder.typicode.com/todos')
+      .pipe(
+        map((data) =>
+          data.map((task) => ({
+            id: task.id,
+            title: task.title,
+            completed: task.completed,
+            priority: 'low' as Priority,
+          })),
+        ),
+      )
+      .subscribe({
+        next: (tasks) => {
+          this.tasks.set(tasks);
+          this.loading.set(false);
+        },
+
+        error: () => {
+          this.error.set('Failed to load tasks.');
+          this.loading.set(false);
+        },
+      });
+  }
+
+  private loadStoredTasks(): Task[] | null {
     const storedTasks = localStorage.getItem('tasks');
 
     if (!storedTasks) {

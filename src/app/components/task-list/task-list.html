@@ -49,14 +49,18 @@
 </div>
 
 <div class="space-y-4 bg-gray-300">
-  @for (task of filteredTasks(); track task.id) {
-    <app-task-item
-      [task]="task"
-      (handleChange)="taskChange.emit($event)"
-      (deleteTask)="taskDelete.emit($event)"
-      (editTask)="editTask.emit($event)"
-    />
-  } @empty {
-    <p>Add a task</p>
+  @if (!hasTasks()) {
+    <p>You don't have any tasks yet.</p>
+  } @else if (!hasFilteredTasks()) {
+    <p>No tasks match your current search or filter.</p>
+  } @else {
+    @for (task of filteredTasks(); track task.id) {
+      <app-task-item
+        [task]="task"
+        (handleChange)="taskChange.emit($event)"
+        (deleteTask)="taskDelete.emit($event)"
+        (editTask)="editTask.emit($event)"
+      />
+    }
   }
 </div>
