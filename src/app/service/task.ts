@@ -1,4 +1,4 @@
-import { Injectable, signal, effect, inject } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Task, Priority, TodoApiResponse } from '../models/task';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
@@ -34,7 +34,7 @@ export class TaskService {
     },
   ];
 
-  private tasks = signal<Task[]>(this.loadStoredTasks() ?? this.initialTasks);
+  private tasks = signal<Task[]>(this.initialTasks);
   private loading = signal(true);
   private error = signal<string | null>(null);
 
@@ -42,14 +42,7 @@ export class TaskService {
   readonly isLoading = this.loading.asReadonly();
   readonly taskError = this.error.asReadonly();
 
-  
   private http = inject(HttpClient);
-
-  constructor() {
-    effect(() => {
-      localStorage.setItem('tasks', JSON.stringify(this.tasks()));
-    });
-  }
 
   loadTasks() {
     this.loading.set(true);
@@ -79,21 +72,6 @@ export class TaskService {
         },
       });
   }
-
-  private loadStoredTasks(): Task[] | null {
-    const storedTasks = localStorage.getItem('tasks');
-
-    if (!storedTasks) {
-      return null;
-    }
-
-    try {
-      return JSON.parse(storedTasks);
-    } catch {
-      return null;
-    }
-  }
-
   getTask(id: number): Task | null {
     return this.tasks().find((t) => t.id === id) ?? null;
   }
