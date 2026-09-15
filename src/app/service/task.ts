@@ -34,10 +34,15 @@ export class TaskService {
     },
   ];
 
-  tasks = signal<Task[]>(this.loadStoredTasks() ?? this.initialTasks);
-  loading = signal(true);
-  error = signal<string | null>(null);
+  private tasks = signal<Task[]>(this.loadStoredTasks() ?? this.initialTasks);
+  private loading = signal(true);
+  private error = signal<string | null>(null);
 
+  readonly taskList = this.tasks.asReadonly();
+  readonly isLoading = this.loading.asReadonly();
+  readonly taskError = this.error.asReadonly();
+
+  
   private http = inject(HttpClient);
 
   constructor() {

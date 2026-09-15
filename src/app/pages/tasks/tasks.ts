@@ -13,9 +13,9 @@ import { Priority, Task } from '../../models/task';
 export class Tasks {
   private taskService = inject(TaskService);
 
-  tasks = this.taskService.tasks;
-  loading = this.taskService.loading;
-  error = this.taskService.error;
+  tasks = this.taskService.taskList;
+  loading = this.taskService.isLoading;
+  error = this.taskService.taskError;
 
   constructor() {
     this.taskService.loadTasks();
