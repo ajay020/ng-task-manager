@@ -12,10 +12,9 @@
     placeholder="Enter task"
   />
 
-  <select name="priority" ngModel class="outline-0 border p-2">
-    <option value="">Priority</option>
+  <select name="priority" [ngModel]="'low'" class="outline-0 border p-2">
     <option value="low">Low</option>
-    <option value="medium">Mdium</option>
+    <option value="medium">Medium</option>
     <option value="high">High</option>
   </select>
 

@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { Task, Priority, TodoApiResponse } from '../models/task';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import { catchError, EMPTY, map, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -83,21 +83,77 @@ export class TaskService {
   }
 
   addTask({ title, priority }: { title: string; priority: Priority }) {
-    const newTask: Task = {
-      id: Date.now(),
+    const newTask = {
       title,
       completed: false,
       priority,
     };
 
-    this.tasks.update((prev) => [...prev, newTask]);
+    this.http
+      .post<TodoApiResponse>('https://jsonplaceholder.typicode.com/todos', newTask)
+      .pipe(
+        map((data) => ({
+          id: data.id,
+          title: data.title,
+          completed: data.completed,
+          priority,
+        })),
+        catchError((error) => {
+          console.log('HTTP error:', error);
+          this.error.set('Failed to add task.');
+
+          return EMPTY;
+        }),
+      )
+      .subscribe({
+        next: (task) => {
+          this.tasks.update((prev) => [task, ...prev]);
+        },
+      });
   }
 
   deleteTask(task: Task) {
-    this.tasks.update((prev) => prev.filter((t) => t.id !== task.id));
+    this.http
+      .delete(`https://jsonplaceholder.typicode.com/todos/${task.id}`)
+      .pipe(
+        catchError((error) => {
+          console.log('HTTP error:', error);
+          this.error.set('Failed to DELETE task.');
+
+          return EMPTY;
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.tasks.update((prev) => prev.filter((t) => t.id !== task.id));
+        },
+        error: (error) => {
+          this.error.set('Failed to delete task.');
+        },
+      });
   }
 
   updateTask(task: Task) {
-    this.tasks.update((value) => value.map((t) => (t.id === task.id ? task : t)));
+    this.http
+      .put<TodoApiResponse>(`https://jsonplaceholder.typicode.com/todos/${task.id}`, task)
+      .pipe(
+        map((data) => ({
+          id: data.id,
+          title: data.title,
+          completed: data.completed,
+          priority: task.priority,
+        })),
+        catchError((error) => {
+          console.log('HTTP error:', error);
+          this.error.set('Failed to update task.');
+
+          return EMPTY;
+        }),
+      )
+      .subscribe({
+        next: (data) => {
+          this.tasks.update((value) => value.map((t) => (t.id === data.id ? data : t)));
+        },
+      });
   }
 }
